@@ -1,0 +1,9 @@
+# Ignore Python virtual environments
+env/
+venv/
+.venv/
+
+# Ignore data and upload directories
+data/
+upload/
+
