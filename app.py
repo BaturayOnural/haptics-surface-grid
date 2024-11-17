@@ -5,7 +5,7 @@ import uuid
 import shutil
 import mimetypes
 
-from surface_analysis import process_frames_combined_optimized, save_intensity_matrices_to_json
+from video_analysis import process_frames_combined_optimized, save_intensity_matrices_to_json
 from image_analysis import process_image, save_intensity_matrix_to_json
 
 app = Flask(__name__, static_folder='dist', static_url_path='/')
