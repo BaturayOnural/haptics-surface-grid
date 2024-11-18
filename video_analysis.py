@@ -1,5 +1,3 @@
-# surface_analysis.py
-
 import cv2
 import numpy as np
 import json
@@ -47,31 +45,25 @@ def process_frames_combined_optimized(video_path, frame_interval_ms=150, scale_p
     # Video frame rate (fps) and total frame count
     fps = cap.get(cv2.CAP_PROP_FPS)
     total_frames = int(cap.get(cv2.CAP_PROP_FRAME_COUNT))
-    video_duration_ms = (total_frames / fps) * 1000  # Total video duration in ms
-
     if fps == 0:
         print("Unable to retrieve video FPS.")
         cap.release()
         return None
+    video_duration_ms = (total_frames / fps) * 1000  # Total video duration in ms
 
-    # Frame interval corresponding to the desired time interval
-    frame_interval = int((frame_interval_ms / 1000) * fps)
-
-    # Calculate total number of frames to process
-    num_frames = int(video_duration_ms // frame_interval_ms)
-
-    # Set current frame number to -frame_interval so that the first increment brings it to 0
-    current_frame_number = -frame_interval
+    # Initialize current timestamp in milliseconds
+    current_timestamp_ms = 0
 
     # Lists to collect frames and previous grayscale frames
     prev_grays = []
     curr_grays = []
     timestamps = []
 
-    # Read the first frame
+    # Read the first frame at time 0 ms
+    cap.set(cv2.CAP_PROP_POS_MSEC, current_timestamp_ms)
     ret, prev_frame = cap.read()
     if not ret:
-        print("Unable to read video or retrieve frame.")
+        print("Unable to read video or retrieve frame at time 0 ms.")
         cap.release()
         return None
 
@@ -90,19 +82,16 @@ def process_frames_combined_optimized(video_path, frame_interval_ms=150, scale_p
     grid_cols = 7  # You can adjust this number
     grid_rows = 5  # You can adjust this number
 
-    for i in range(num_frames):
-        # Increment current frame number
-        current_frame_number += frame_interval
+    # Increment timestamp for the next frame
+    current_timestamp_ms += frame_interval_ms
 
-        if current_frame_number >= total_frames:
-            print(f"Frame {i+1} does not exist.")
-            break
-
+    # Process frames until the end of the video
+    while current_timestamp_ms <= video_duration_ms:
         # Set the position to read the current frame
-        cap.set(cv2.CAP_PROP_POS_FRAMES, current_frame_number)
+        cap.set(cv2.CAP_PROP_POS_MSEC, current_timestamp_ms)
         ret, curr_frame = cap.read()
         if not ret:
-            print(f"Unable to read frame {i+1}.")
+            print(f"Unable to read frame at {current_timestamp_ms} ms.")
             break
 
         # Reduce resolution
@@ -111,16 +100,16 @@ def process_frames_combined_optimized(video_path, frame_interval_ms=150, scale_p
         # Convert to grayscale
         curr_gray = cv2.cvtColor(curr_frame, cv2.COLOR_BGR2GRAY)
 
-        # Calculate and append timestamp
-        timestamp_ms = current_frame_number * (1000 / fps)
-        timestamps.append(timestamp_ms)
-
         # Append to lists
         prev_grays.append(prev_gray)
         curr_grays.append(curr_gray)
+        timestamps.append(current_timestamp_ms)
 
         # Update for the next iteration
         prev_gray = curr_gray.copy()
+
+        # Increment timestamp
+        current_timestamp_ms += frame_interval_ms
 
     cap.release()
 
@@ -131,10 +120,11 @@ def process_frames_combined_optimized(video_path, frame_interval_ms=150, scale_p
     # Create a processing pool based on the number of CPUs
     pool = Pool(processes=cpu_count())
 
-    # Process frames in parallel
+    # Prepare arguments for parallel processing
     args_list = [(prev_grays[i], curr_grays[i], frame_height, frame_width, grid_rows, grid_cols)
                  for i in range(len(prev_grays))]
 
+    # Process frames in parallel
     results = pool.map(process_single_frame_optimized, args_list)
 
     pool.close()
