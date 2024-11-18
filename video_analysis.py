@@ -40,7 +40,7 @@ def process_single_frame_optimized(args):
 
     return flow_intensity_matrix, brightness_intensity_matrix, edge_intensity_matrix
 
-def process_frames_combined_optimized(video_path, frame_interval_ms=300, scale_percent=50):
+def process_frames_combined_optimized(video_path, frame_interval_ms=150, scale_percent=50):
     # Video capture object
     cap = cv2.VideoCapture(video_path)
 
@@ -87,7 +87,7 @@ def process_frames_combined_optimized(video_path, frame_interval_ms=300, scale_p
     frame_height, frame_width = prev_frame.shape[:2]
 
     # Set grid dimensions
-    grid_cols = 8  # You can adjust this number
+    grid_cols = 7  # You can adjust this number
     grid_rows = 5  # You can adjust this number
 
     for i in range(num_frames):

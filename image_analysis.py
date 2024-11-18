@@ -27,7 +27,7 @@ def process_single_image(gray_image, grid_rows, grid_cols):
 
     return brightness_intensity_matrix, edge_intensity_matrix
 
-def process_image(image_path, grid_rows=5, grid_cols=8, scale_percent=50):
+def process_image(image_path, grid_rows=5, grid_cols=7, scale_percent=50):
     """
     Process an image and generate intensity matrices.
     """
