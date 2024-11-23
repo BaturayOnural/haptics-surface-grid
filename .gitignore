@@ -5,5 +5,7 @@ venv/
 
 # Ignore data and upload directories
 data/
-uploads/
+uploads/ 
 
+# Ignore node_modules folder in frontend-source
+frontend-source/node_modules/

@@ -1,3 +1,5 @@
+# Contributor(s): Erhan Baturay Onural
+
 import cv2
 import numpy as np
 import json
