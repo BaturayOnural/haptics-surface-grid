@@ -11,7 +11,7 @@ The project utilizes several frameworks.
  - Numpy - numerical representations
 
 ## Project Setup
-The project includes both backend and frontend source files. The frontend source files are included in the file `frontend-source` folder. The backend source files are included starting from the root directory of the project. The frontend files are prebuilt and already can be found in the folder `dist`. If you would like to change the frontend files, please check the README file under the `frontend-source` folder. The main application's required steps to build are explained below.
+The project includes both backend and frontend source files. The frontend source files are included in the file `frontend-source` folder. The backend source files are included starting from the root directory of the project. The frontend files are prebuilt and already can be found in the folder `dist`. If you would like to change the frontend files, please check the README file under the `frontend-source` folder. Example dataset can be found under the folder `dataset`. The main application's required steps to build are explained below.
 
 Creating a python virtual environment is highly suggested. Build a virtual environment with a name `env`:
 ```
